@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Leaf House Cafe — a place to drift</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Serif+Display:ital@0;1&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a14;
+    --cream: #f5f0e8;
+    --cream-dark: #ede7d9;
+    --forest: #2d4a30;
+    --forest-light: #3d6342;
+    --moss: #5c7a4e;
+    --gold: #b8965a;
+    --gold-light: #d4ae78;
+    --sage: #a8b89a;
+    --mist: #e8ede4;
+    --white: #fdfaf5;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ─── NOISE TEXTURE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 3rem;
+    mix-blend-mode: normal;
+    transition: background 0.5s, backdrop-filter 0.5s;
+  }
+  nav.scrolled {
+    background: rgba(245,240,232,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(184,150,90,0.15);
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    text-decoration: none;
+    transition: color 0.4s;
+  }
+  nav.scrolled .nav-logo { color: var(--forest); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(253,250,245,0.8);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold-light); }
+  nav.scrolled .nav-links a { color: var(--forest); }
+  nav.scrolled .nav-links a:hover { color: var(--gold); }
+
+  .nav-cta {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-light) !important;
+    border: 1px solid var(--gold-light);
+    padding: 0.55rem 1.4rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s !important;
+  }
+  .nav-cta:hover { background: var(--gold); color: var(--white) !important; border-color: var(--gold); }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 700px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--forest);
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 60% 40%, rgba(92,122,78,0.35) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 80% at 15% 70%, rgba(45,74,48,0.8) 0%, transparent 60%),
+      linear-gradient(160deg, #1a2e1c 0%, #2d4a30 35%, #1e3820 65%, #141f15 100%);
+  }
+
+  /* Animated leaf drifts */
+  .leaf-drift {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    animation: leafFall linear infinite;
+  }
+  .leaf-drift svg { display: block; }
+
+  @keyframes leafFall {
+    0% { opacity: 0; transform: translateY(-60px) rotate(0deg) translateX(0); }
+    10% { opacity: 0.35; }
+    90% { opacity: 0.2; }
+    100% { opacity: 0; transform: translateY(110vh) rotate(480deg) translateX(80px); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 2rem;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(4rem, 10vw, 9rem);
+    color: var(--white);
+    line-height: 0.9;
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.01em;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.6s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--sage);
+    display: block;
+  }
+
+  .hero-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    color: var(--sage);
+    letter-spacing: 0.05em;
+    margin-top: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.9s forwards;
+  }
+
+  .hero-divider {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    margin: 2.5rem auto;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.2s forwards;
+  }
+
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.4s forwards;
+  }
+  .hero-meta-item {
+    text-align: center;
+  }
+  .hero-meta-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  .hero-meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--cream);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeIn 1.2s ease 2s forwards;
+    cursor: pointer;
+  }
+  .hero-scroll span {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--sage);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--sage), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { transform: scaleY(1); opacity: 0.6; }
+    50% { transform: scaleY(0.6); opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ─── SECTION BASE ─── */
+  section { position: relative; }
+
+  .section-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ─── INTRO STRIP ─── */
+  .intro-strip {
+    background: var(--forest);
+    padding: 4rem 0;
+    overflow: hidden;
+  }
+  .intro-strip-track {
+    display: flex;
+    gap: 3rem;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+  .intro-strip-item {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.4rem;
+    color: var(--sage);
+    flex-shrink: 0;
+  }
+  .intro-strip-dot {
+    color: var(--gold);
+    margin: 0 1rem;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ─── STORY ─── */
+  .story {
+    padding: 8rem 0;
+    background: var(--white);
+  }
+  .story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .story-visual {
+    position: relative;
+    height: 580px;
+  }
+  .story-card {
+    position: absolute;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .story-card-main {
+    width: 72%;
+    height: 440px;
+    top: 0; left: 0;
+    background: linear-gradient(145deg, #2d4a30, #3d6342);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .story-card-accent {
+    width: 55%;
+    height: 260px;
+    bottom: 0; right: 0;
+    background: linear-gradient(145deg, #b8965a, #8a6e3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .leaf-icon-lg {
+    opacity: 0.25;
+  }
+  .story-float-badge {
+    position: absolute;
+    top: 50%;
+    right: -30px;
+    transform: translateY(-50%);
+    background: var(--cream);
+    border: 1px solid var(--gold-light);
+    padding: 1.5rem;
+    text-align: center;
+    width: 120px;
+    z-index: 2;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+  }
+  .story-float-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.5rem;
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+  }
+  .story-float-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--forest);
+    margin-top: 0.4rem;
+    display: block;
+  }
+
+  .section-kicker {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    color: var(--forest);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  .section-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .section-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #4a4a3a;
+    margin-bottom: 1.5rem;
+  }
+  .text-link {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--forest);
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 2px;
+    transition: color 0.3s, border-color 0.3s;
+  }
+  .text-link:hover { color: var(--gold); }
+
+  /* ─── SIGNATURE ─── */
+  .signature {
+    padding: 8rem 0;
+    background: var(--forest);
+    overflow: hidden;
+  }
+  .signature-header {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+  .signature-header .section-title { color: var(--cream); }
+  .signature-header .section-title em { color: var(--gold-light); }
+  .signature-header .section-kicker { color: var(--sage); }
+
+  .drinks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .drink-card {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .drink-card-inner {
+    padding: 3rem 2.5rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    height: 100%;
+    transition: background 0.5s;
+    min-height: 340px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .drink-card:hover .drink-card-inner {
+    background: rgba(184,150,90,0.1);
+    border-color: rgba(184,150,90,0.3);
+  }
+  .drink-number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 5rem;
+    color: rgba(255,255,255,0.04);
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    line-height: 1;
+    transition: color 0.5s;
+  }
+  .drink-card:hover .drink-number { color: rgba(184,150,90,0.12); }
+  .drink-emoji {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+  .drink-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--cream);
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+  }
+  .drink-name em { font-style: italic; color: var(--gold-light); }
+  .drink-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--sage);
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+  }
+  .drink-price {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+  }
+
+  /* ─── EXPERIENCE ─── */
+  .experience {
+    padding: 9rem 0;
+    background: var(--cream-dark);
+  }
+  .experience-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .experience-text { padding-top: 2rem; }
+  .pillars {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    margin-top: 3rem;
+  }
+  .pillar {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .pillar.visible { opacity: 1; transform: translateX(0); }
+  .pillar-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 2rem;
+  }
+  .pillar-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    color: var(--forest);
+    margin-bottom: 0.4rem;
+  }
+  .pillar-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    color: #5a5a48;
+    line-height: 1.65;
+  }
+
+  /* Mosaic side */
+  .mosaic {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 1rem;
+  }
+  .mosaic-block {
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    min-height: 180px;
+  }
+  .mosaic-block:first-child {
+    grid-column: 1 / -1;
+    min-height: 280px;
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-light) 100%);
+    position: relative;
+  }
+  .mosaic-block:nth-child(2) {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+    min-height: 200px;
+  }
+  .mosaic-block:nth-child(3) {
+    background: var(--ink);
+    min-height: 200px;
+  }
+  .mosaic-text-overlay {
+    text-align: center;
+    padding: 2rem;
+  }
+  .mosaic-big-text {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 2.5rem;
+    color: var(--cream);
+    line-height: 1.1;
+  }
+  .mosaic-sub {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-top: 0.8rem;
+    display: block;
+  }
+  .mosaic-stat {
+    text-align: center;
+    padding: 1.5rem;
+  }
+  .mosaic-stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem;
+    color: var(--forest);
+    line-height: 1;
+    display: block;
+  }
+  .mosaic-stat-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--forest);
+    display: block;
+    margin-top: 0.4rem;
+    opacity: 0.7;
+  }
+  .mosaic-quote {
+    padding: 2rem;
+    text-align: center;
+  }
+  .mosaic-quote p {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--sage);
+    line-height: 1.6;
+  }
+
+  /* ─── REVIEWS ─── */
+  .reviews {
+    padding: 8rem 0;
+    background: var(--white);
+  }
+  .reviews-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  .stars {
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .review-card {
+    padding: 2.5rem;
+    background: var(--mist);
+    border-left: 2px solid var(--gold);
+    position: relative;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .review-card.visible { opacity: 1; transform: translateY(0); }
+  .review-card::before {
+    content: '"';
+    font-family: 'DM Serif Display', serif;
+    font-size: 5rem;
+    color: var(--gold);
+    opacity: 0.2;
+    position: absolute;
+    top: 0.5rem;
+    left: 1.5rem;
+    line-height: 1;
+  }
+  .review-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #3a3a2e;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+  .review-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .review-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--forest);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 0.9rem;
+    color: var(--cream);
+    flex-shrink: 0;
+  }
+  .review-name {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--forest);
+    display: block;
+  }
+  .review-date {
+    font-size: 0.65rem;
+    color: var(--moss);
+    opacity: 0.7;
+  }
+
+  /* ─── MENU TEASER ─── */
+  .menu-teaser {
+    padding: 8rem 0;
+    background: var(--forest);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .menu-teaser-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(92,122,78,0.4), transparent);
+  }
+  .menu-teaser .section-title { color: var(--cream); margin-bottom: 0.5rem; }
+  .menu-teaser .section-title em { color: var(--gold-light); }
+  .menu-teaser .section-kicker { color: var(--sage); }
+  .menu-categories {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 3rem 0;
+    position: relative;
+  }
+  .menu-cat {
+    padding: 0.8rem 2rem;
+    border: 1px solid rgba(255,255,255,0.15);
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--sage);
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 2px;
+  }
+  .menu-cat.active, .menu-cat:hover {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--forest);
+  }
+  .menu-items {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    text-align: left;
+    position: relative;
+  }
+  .menu-item {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .menu-item-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    color: var(--cream);
+    margin-bottom: 0.3rem;
+  }
+  .menu-item-desc {
+    font-size: 0.72rem;
+    color: var(--sage);
+    opacity: 0.8;
+    line-height: 1.5;
+    margin-bottom: 0.8rem;
+  }
+  .menu-item-price {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+  }
+
+  /* ─── VISIT ─── */
+  .visit {
+    padding: 8rem 0;
+    background: var(--cream);
+  }
+  .visit-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .visit-info { }
+  .visit-details {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .visit-detail {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr;
+    gap: 1rem;
+    align-items: start;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(184,150,90,0.2);
+  }
+  .visit-detail-icon { color: var(--gold); font-size: 0.9rem; margin-top: 0.1rem; }
+  .visit-detail-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--moss);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  .visit-detail-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--forest);
+    line-height: 1.5;
+  }
+
+  .map-container {
+    border-radius: 3px;
+    overflow: hidden;
+    height: 400px;
+    background: var(--forest);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .map-placeholder {
+    text-align: center;
+    padding: 2rem;
+  }
+  .map-placeholder svg { opacity: 0.3; margin-bottom: 1rem; }
+  .map-placeholder p {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--sage);
+    margin-bottom: 1.5rem;
+  }
+
+  /* ─── CTA ─── */
+  .cta-block {
+    padding: 8rem 0;
+    background: var(--ink);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 60% at 30% 50%, rgba(45,74,48,0.5), transparent),
+      radial-gradient(ellipse 50% 50% at 80% 50%, rgba(184,150,90,0.15), transparent);
+  }
+  .cta-block .section-title {
+    color: var(--white);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    position: relative;
+  }
+  .cta-block .section-title em { color: var(--gold-light); }
+  .cta-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--sage);
+    margin-bottom: 3rem;
+    position: relative;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: var(--gold);
+    color: var(--forest);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 1.1rem 2.8rem;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: background 0.3s, transform 0.3s;
+    position: relative;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: transparent;
+    color: var(--cream);
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 1.1rem 2.8rem;
+    text-decoration: none;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    margin-left: 1rem;
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--ink);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 4rem 0 2rem;
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .footer-brand-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--cream);
+    margin-bottom: 0.8rem;
+  }
+  .footer-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--sage);
+    margin-bottom: 1.5rem;
+  }
+  .footer-social {
+    display: flex;
+    gap: 1rem;
+  }
+  .footer-social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 2px;
+    color: var(--sage);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .footer-social a:hover { border-color: var(--gold); color: var(--gold); }
+  .footer-col-title {
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.7rem; }
+  .footer-col a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--sage);
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.3s, color 0.3s;
+  }
+  .footer-col a:hover { color: var(--cream); opacity: 1; }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 2rem;
+  }
+  .footer-copy {
+    font-size: 0.65rem;
+    color: var(--sage);
+    opacity: 0.5;
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+    .story-grid, .experience-grid, .visit-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .story-visual { height: 380px; }
+    .drinks-grid { grid-template-columns: 1fr; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .menu-items { grid-template-columns: repeat(2, 1fr); }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .hero-meta { gap: 1.5rem; }
+    .hero-title { font-size: 3.5rem; }
+    .menu-items { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr; }
+    section { padding: 5rem 0 !important; }
+    .story, .experience, .reviews, .visit { padding: 5rem 0; }
+    .signature, .menu-teaser, .cta-block { padding: 5rem 0; }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">THE LEAF HOUSE CAFE</a>
+  <ul class="nav-links">
+    <li><a href="#story">Our Story</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#visit">Visit</a></li>
+    <li><a href="tel:0399511151" class="nav-cta">Reserve a Seat</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+
+  <!-- Floating leaf particles -->
+  <div class="leaf-drift" style="left:10%; animation-duration:14s; animation-delay:0s; top:-5%">
+    <svg width="24" height="32" viewBox="0 0 24 32" fill="none"><path d="M12 2C12 2 2 10 2 20C2 26.627 6.477 31 12 31C17.523 31 22 26.627 22 20C22 10 12 2 12 2Z" fill="#5c7a4e"/><line x1="12" y1="4" x2="12" y2="30" stroke="#3d6342" stroke-width="0.8"/></svg>
+  </div>
+  <div class="leaf-drift" style="left:25%; animation-duration:18s; animation-delay:3s; top:-5%">
+    <svg width="18" height="24" viewBox="0 0 24 32" fill="none"><path d="M12 2C12 2 2 10 2 20C2 26.627 6.477 31 12 31C17.523 31 22 26.627 22 20C22 10 12 2 12 2Z" fill="#3d6342"/><line x1="12" y1="4" x2="12" y2="30" stroke="#2d4a30" stroke-width="0.8"/></svg>
+  </div>
+  <div class="leaf-drift" style="left:60%; animation-duration:12s; animation-delay:6s; top:-5%">
+    <svg width="20" height="28" viewBox="0 0 24 32" fill="none"><path d="M12 2C12 2 2 10 2 20C2 26.627 6.477 31 12 31C17.523 31 22 26.627 22 20C22 10 12 2 12 2Z" fill="#a8b89a"/></svg>
+  </div>
+  <div class="leaf-drift" style="left:80%; animation-duration:16s; animation-delay:2s; top:-5%">
+    <svg width="14" height="20" viewBox="0 0 24 32" fill="none"><path d="M12 2C12 2 2 10 2 20C2 26.627 6.477 31 12 31C17.523 31 22 26.627 22 20C22 10 12 2 12 2Z" fill="#5c7a4e"/></svg>
+  </div>
+  <div class="leaf-drift" style="left:45%; animation-duration:20s; animation-delay:9s; top:-5%">
+    <svg width="22" height="30" viewBox="0 0 24 32" fill="none"><path d="M12 2C12 2 2 10 2 20C2 26.627 6.477 31 12 31C17.523 31 22 26.627 22 20C22 10 12 2 12 2Z" fill="#b8965a" opacity="0.5"/></svg>
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Biển Thanh Khê · Đà Nẵng</p>
+    <h1 class="hero-title">
+      The Leaf
+      <em>House Cafe</em>
+    </h1>
+    <p class="hero-tagline">/ a place to drift /</p>
+    <div class="hero-divider"></div>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Hours</span>
+        <span class="hero-meta-value">7:00 am — 10:00 pm</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Open</span>
+        <span class="hero-meta-value">Every day</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Location</span>
+        <span class="hero-meta-value">Thanh Khê Beach</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll" onclick="document.getElementById('story').scrollIntoView({behavior:'smooth'})">
+    <span>Explore</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- INTRO STRIP -->
+<div class="intro-strip">
+  <div class="intro-strip-track" id="marqueeTrack">
+    <span class="intro-strip-item">Specialty Coffee</span><span class="intro-strip-dot">◆</span>
+    <span class="intro-strip-item">Handcrafted Drinks</span><span class="intro-strip-dot">◆</span>
+    <span class="intro-strip-item">Beachside Serenity</span><span class="intro-strip-dot">◆</span>
+    <span class="intro-strip-item">Fresh Bites</span><span class="intro-strip-dot">◆</span>
+    <span class="intro-strip-item">A Place to Drift</span><span class="intro-strip-dot">◆</span>
+    <span class="intro-strip-item">Da Nang's Hidden Garden</span><span class="intro-strip-dot">◆</span>
+    <span class="intro-strip-item">Specialty Coffee</span><span class="intro-strip-dot">◆</span>
+    <span class="intro-strip-item">Handcrafted Drinks</span><span class="intro-strip-dot">◆</span>
+    <span class="intro-strip-item">Beachside Serenity</span><span class="intro-strip-dot">◆</span>
+    <span class="intro-strip-item">Fresh Bites</span><span class="intro-strip-dot">◆</span>
+    <span class="intro-strip-item">A Place to Drift</span><span class="intro-strip-dot">◆</span>
+    <span class="intro-strip-item">Da Nang's Hidden Garden</span><span class="intro-strip-dot">◆</span>
+  </div>
+</div>
+
+<!-- STORY -->
+<section class="story" id="story">
+  <div class="section-inner">
+    <div class="story-grid">
+      <div class="story-visual reveal">
+        <div class="story-card story-card-main">
+          <svg class="leaf-icon-lg" width="160" height="200" viewBox="0 0 160 200" fill="none">
+            <path d="M80 10C80 10 10 60 10 130C10 168 42 190 80 190C118 190 150 168 150 130C150 60 80 10 80 10Z" fill="#a8b89a"/>
+            <line x1="80" y1="20" x2="80" y2="185" stroke="#5c7a4e" stroke-width="2"/>
+            <path d="M80 60 Q50 90 40 120" stroke="#5c7a4e" stroke-width="1.2" fill="none"/>
+            <path d="M80 80 Q110 100 120 130" stroke="#5c7a4e" stroke-width="1.2" fill="none"/>
+            <path d="M80 100 Q55 118 50 145" stroke="#5c7a4e" stroke-width="1" fill="none"/>
+            <path d="M80 110 Q105 125 110 150" stroke="#5c7a4e" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <div class="story-card story-card-accent">
+          <div style="text-align:center; padding: 2rem;">
+            <div style="font-family:'DM Serif Display',serif; font-style:italic; font-size:1.3rem; color:var(--forest); line-height:1.3;">Made with<br>care & love</div>
+          </div>
+        </div>
+        <div class="story-float-badge">
+          <span class="story-float-num">∞</span>
+          <span class="story-float-label">Moments<br>to cherish</span>
+        </div>
+      </div>
+
+      <div class="story-text reveal">
+        <span class="section-kicker">Our Story</span>
+        <h2 class="section-title">Where every <em>sip</em> tells a story</h2>
+        <p class="section-body">
+          Tucked beside the gentle shores of Thanh Khê, The Leaf House Cafe was born from a simple belief — that a great cup of coffee should feel like a slow exhale. A moment to pause, to be present, to drift.
+        </p>
+        <p class="section-body">
+          Each drink we craft is an act of care. From the first light of morning to the amber glow of evening, we pour attention into every glass and warmth into every corner of our space.
+        </p>
+        <a href="#experience" class="text-link">Discover our philosophy →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNATURE DRINKS -->
+<section class="signature" id="drinks">
+  <div class="section-inner">
+    <div class="signature-header reveal">
+      <span class="section-kicker">Signature Series</span>
+      <h2 class="section-title">Drinks crafted with <em>intention</em></h2>
+    </div>
+    <div class="drinks-grid">
+      <div class="drink-card reveal">
+        <div class="drink-card-inner">
+          <div class="drink-number">01</div>
+          <span class="drink-emoji">🍃</span>
+          <h3 class="drink-name">Leaf <em>Cold Brew</em></h3>
+          <p class="drink-desc">18-hour steeping, Vietnamese highland beans, poured over hand-carved ice.</p>
+          <span class="drink-price">From 45,000 ₫</span>
+        </div>
+      </div>
+      <div class="drink-card reveal" style="transition-delay:0.1s">
+        <div class="drink-card-inner">
+          <div class="drink-number">02</div>
+          <span class="drink-emoji">🥛</span>
+          <h3 class="drink-name">Coconut <em>Signature Latte</em></h3>
+          <p class="drink-desc">Espresso floated on house-made coconut cream, kissed with pandan syrup.</p>
+          <span class="drink-price">From 55,000 ₫</span>
+        </div>
+      </div>
+      <div class="drink-card reveal" style="transition-delay:0.2s">
+        <div class="drink-card-inner">
+          <div class="drink-number">03</div>
+          <span class="drink-emoji">🍵</span>
+          <h3 class="drink-name">Matcha <em>Drift</em></h3>
+          <p class="drink-desc">Japanese ceremonial grade, whisked to silk, layered with oat milk foam.</p>
+          <span class="drink-price">From 60,000 ₫</span>
+        </div>
+      </div>
+      <div class="drink-card reveal" style="transition-delay:0.1s">
+        <div class="drink-card-inner">
+          <div class="drink-number">04</div>
+          <span class="drink-emoji">☕</span>
+          <h3 class="drink-name">Cà Phê <em>Sữa Đá</em></h3>
+          <p class="drink-desc">Our tribute to Vietnam — robusta blended with arabica, sweetened condensed milk, crushed ice.</p>
+          <span class="drink-price">From 35,000 ₫</span>
+        </div>
+      </div>
+      <div class="drink-card reveal" style="transition-delay:0.2s">
+        <div class="drink-card-inner">
+          <div class="drink-number">05</div>
+          <span class="drink-emoji">🌿</span>
+          <h3 class="drink-name">Hibiscus <em>Garden</em></h3>
+          <p class="drink-desc">Dried hibiscus, lemongrass, a thread of honey. Iced. Floral. Deeply refreshing.</p>
+          <span class="drink-price">From 45,000 ₫</span>
+        </div>
+      </div>
+      <div class="drink-card reveal" style="transition-delay:0.3s">
+        <div class="drink-card-inner">
+          <div class="drink-number">06</div>
+          <span class="drink-emoji">🧋</span>
+          <h3 class="drink-name">Brown Sugar <em>Milk Tea</em></h3>
+          <p class="drink-desc">Tiger-striped, tapioca pearls, premium Ceylon tea, just enough sweetness.</p>
+          <span class="drink-price">From 50,000 ₫</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="experience" id="experience">
+  <div class="section-inner">
+    <div class="experience-grid">
+      <div class="experience-text">
+        <span class="section-kicker">The Leaf Experience</span>
+        <h2 class="section-title">A space made for <em>slow moments</em></h2>
+        <div class="pillars">
+          <div class="pillar" data-delay="0">
+            <span class="pillar-num">I</span>
+            <div>
+              <div class="pillar-title">Curated with care</div>
+              <p class="pillar-desc">Every drink is prepared by hand, with thoughtful ingredients sourced from Vietnamese farms and local markets.</p>
+            </div>
+          </div>
+          <div class="pillar" data-delay="150">
+            <span class="pillar-num">II</span>
+            <div>
+              <div class="pillar-title">A coastal sanctuary</div>
+              <p class="pillar-desc">Steps from Thanh Khê beach, our space is designed to let the breeze in and the noise out — a soft escape within the city.</p>
+            </div>
+          </div>
+          <div class="pillar" data-delay="300">
+            <span class="pillar-num">III</span>
+            <div>
+              <div class="pillar-title">Warm hospitality</div>
+              <p class="pillar-desc">We greet every guest like a friend returning home. December at The Leaf — slow meetings, drinks made with love.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mosaic reveal">
+        <div class="mosaic-block">
+          <div class="mosaic-text-overlay">
+            <div class="mosaic-big-text">
+              "Best coffee<br>we'd had<br>in Da Nang"
+            </div>
+            <span class="mosaic-sub">⭐⭐⭐⭐⭐ — Guest review</span>
+          </div>
+        </div>
+        <div class="mosaic-block">
+          <div class="mosaic-stat">
+            <span class="mosaic-stat-num">7 AM</span>
+            <span class="mosaic-stat-label">Open every morning</span>
+          </div>
+        </div>
+        <div class="mosaic-block">
+          <div class="mosaic-quote">
+            <p>"A place that serves drinks with love — and it shows in every sip."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+  <div class="section-inner">
+    <div class="reviews-header reveal">
+      <span class="stars">★★★★★</span>
+      <span class="section-kicker">Guest Love</span>
+      <h2 class="section-title">Words from those who <em>drifted in</em></h2>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card" data-delay="0">
+        <p class="review-text">We went to the market and decided to have a coffee break and found this place. What a fantastic find — great air conditioning, great coffee, and the spotless space. Genuinely the best coffee we had in Da Nang.</p>
+        <div class="review-meta">
+          <div class="review-avatar">S</div>
+          <div>
+            <span class="review-name">Sarah M.</span>
+            <span class="review-date">Verified visitor</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card" data-delay="150">
+        <p class="review-text">A hidden gem by the coast. The coconut coffee is extraordinary — layered, silky, and unlike anything I've tasted. The staff truly pour care into every drink. I came back three times in one week.</p>
+        <div class="review-meta">
+          <div class="review-avatar">T</div>
+          <div>
+            <span class="review-name">Thành N.</span>
+            <span class="review-date">Regular guest</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card" data-delay="300">
+        <p class="review-text">Tháng 12 ở The Leaf là những buổi gặp gỡ thật chậm — December at The Leaf is unhurried meetings, drinks made with love. A beautiful place to simply be.</p>
+        <div class="review-meta">
+          <div class="review-avatar">L</div>
+          <div>
+            <span class="review-name">Linh H.</span>
+            <span class="review-date">Local favourite</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FULL MENU TEASER -->
+<section class="menu-teaser" id="menu">
+  <div class="menu-teaser-bg"></div>
+  <div class="section-inner" style="position:relative">
+    <div class="reveal">
+      <span class="section-kicker">Full Menu</span>
+      <h2 class="section-title">Everything we <em>love</em> to make</h2>
+    </div>
+    <div class="menu-categories reveal">
+      <div class="menu-cat active" onclick="filterMenu('all', this)">All</div>
+      <div class="menu-cat" onclick="filterMenu('coffee', this)">Coffee</div>
+      <div class="menu-cat" onclick="filterMenu('tea', this)">Tea & Botanicals</div>
+      <div class="menu-cat" onclick="filterMenu('food', this)">Light Bites</div>
+      <div class="menu-cat" onclick="filterMenu('cold', this)">Cold Drinks</div>
+    </div>
+    <div class="menu-items reveal" id="menuGrid">
+      <div class="menu-item" data-cat="coffee">
+        <div class="menu-item-name">Americano Đen</div>
+        <div class="menu-item-desc">Clean, bold, Vietnamese highland</div>
+        <div class="menu-item-price">30,000 ₫</div>
+      </div>
+      <div class="menu-item" data-cat="coffee">
+        <div class="menu-item-name">Cà Phê Trứng</div>
+        <div class="menu-item-desc">Egg yolk cream, Hanoi-style</div>
+        <div class="menu-item-price">50,000 ₫</div>
+      </div>
+      <div class="menu-item" data-cat="coffee">
+        <div class="menu-item-name">Espresso Tonic</div>
+        <div class="menu-item-desc">Sparkling tonic, double shot, citrus zest</div>
+        <div class="menu-item-price">55,000 ₫</div>
+      </div>
+      <div class="menu-item" data-cat="coffee">
+        <div class="menu-item-name">Flat White</div>
+        <div class="menu-item-desc">Micro-foam, rich espresso</div>
+        <div class="menu-item-price">45,000 ₫</div>
+      </div>
+      <div class="menu-item" data-cat="tea">
+        <div class="menu-item-name">Pandan Iced Tea</div>
+        <div class="menu-item-desc">Fragrant pandan leaf, light honey</div>
+        <div class="menu-item-price">40,000 ₫</div>
+      </div>
+      <div class="menu-item" data-cat="tea">
+        <div class="menu-item-name">Hibiscus Lemongrass</div>
+        <div class="menu-item-desc">Floral, tart, deeply refreshing</div>
+        <div class="menu-item-price">45,000 ₫</div>
+      </div>
+      <div class="menu-item" data-cat="cold">
+        <div class="menu-item-name">Mango Coconut Shake</div>
+        <div class="menu-item-desc">Blend of fresh mango, coconut milk</div>
+        <div class="menu-item-price">55,000 ₫</div>
+      </div>
+      <div class="menu-item" data-cat="food">
+        <div class="menu-item-name">Avocado Toast</div>
+        <div class="menu-item-desc">Sourdough, hass avocado, sesame, chilli</div>
+        <div class="menu-item-price">65,000 ₫</div>
+      </div>
+      <div class="menu-item" data-cat="food">
+        <div class="menu-item-name">Bánh Mì Sandwich</div>
+        <div class="menu-item-desc">Butter, pâté, pickled daikon, fresh herbs</div>
+        <div class="menu-item-price">45,000 ₫</div>
+      </div>
+      <div class="menu-item" data-cat="cold">
+        <div class="menu-item-name">Yuzu Sparkle</div>
+        <div class="menu-item-desc">Japanese yuzu, soda, sea salt rim</div>
+        <div class="menu-item-price">50,000 ₫</div>
+      </div>
+      <div class="menu-item" data-cat="tea">
+        <div class="menu-item-name">Vietnamese Milk Tea</div>
+        <div class="menu-item-desc">Strong black tea, condensed milk, pearls</div>
+        <div class="menu-item-price">45,000 ₫</div>
+      </div>
+      <div class="menu-item" data-cat="food">
+        <div class="menu-item-name">Seasonal Fruit Bowl</div>
+        <div class="menu-item-desc">Local fruit, yogurt, granola, honey drizzle</div>
+        <div class="menu-item-price">55,000 ₫</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISIT -->
+<section class="visit" id="visit">
+  <div class="section-inner">
+    <div class="visit-grid">
+      <div class="visit-info">
+        <span class="section-kicker">Find Us</span>
+        <h2 class="section-title">Come find <em>your drift</em></h2>
+        <p class="section-body">Nestled at the edge of Thanh Khê beach, we're your neighbourhood cafe at the quieter end of Da Nang's coast.</p>
+        <div class="visit-details">
+          <div class="visit-detail">
+            <span class="visit-detail-icon">📍</span>
+            <div>
+              <span class="visit-detail-label">Address</span>
+              <span class="visit-detail-value">1151 Nguyễn Tất Thành, Xuân Hà,<br>Thanh Khê, Đà Nẵng</span>
+            </div>
+          </div>
+          <div class="visit-detail">
+            <span class="visit-detail-icon">🕖</span>
+            <div>
+              <span class="visit-detail-label">Hours</span>
+              <span class="visit-detail-value">7:00 AM — 10:00 PM · Every day</span>
+            </div>
+          </div>
+          <div class="visit-detail">
+            <span class="visit-detail-icon">📞</span>
+            <div>
+              <span class="visit-detail-label">Phone</span>
+              <span class="visit-detail-value"><a href="tel:0399511151" style="color:inherit; text-decoration:none;">0399 511 151</a></span>
+            </div>
+          </div>
+          <div class="visit-detail">
+            <span class="visit-detail-icon">✉</span>
+            <div>
+              <span class="visit-detail-label">Email</span>
+              <span class="visit-detail-value"><a href="mailto:theleafcafe00@gmail.com" style="color:inherit; text-decoration:none;">theleafcafe00@gmail.com</a></span>
+            </div>
+          </div>
+          <div class="visit-detail" style="border:none">
+            <span class="visit-detail-icon">📱</span>
+            <div>
+              <span class="visit-detail-label">Instagram</span>
+              <span class="visit-detail-value">@theleaf.housecafe</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="map-container">
+          <div class="map-placeholder">
+            <svg width="48" height="60" viewBox="0 0 48 60" fill="none">
+              <path d="M24 2C14.06 2 6 10.06 6 20C6 33.5 24 58 24 58C24 58 42 33.5 42 20C42 10.06 33.94 2 24 2Z" fill="#a8b89a"/>
+              <circle cx="24" cy="20" r="7" fill="#2d4a30"/>
+            </svg>
+            <p>1151 Nguyễn Tất Thành<br>Thanh Khê, Đà Nẵng</p>
+            <a href="https://maps.app.goo.gl/eSgtVYeM77mkGF7i6" target="_blank" class="btn-primary" style="display:inline-flex; font-size:0.68rem; padding:0.9rem 2rem;">
+              Open in Google Maps ↗
+            </a>
+          </div>
+        </div>
+        <!-- Embedded map attempt -->
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d490.97!2d108.186807!3d16.0731486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314219dbfa1d45bb%3A0xbac6e60ddc1b99ba!2sTHE%20LEAF%20HOUSE%20CAFE!5e0!3m2!1sen!2svn!4v1700000000000" 
+          width="100%" 
+          height="400" 
+          style="border:0; border-radius:3px; display:block; margin-top:1rem;" 
+          allowfullscreen="" 
+          loading="lazy">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-block">
+  <div class="section-inner" style="position:relative">
+    <span class="section-kicker" style="color:var(--sage)">Come as you are</span>
+    <h2 class="section-title">Ready to <em>drift</em>?</h2>
+    <p class="cta-sub">A seat is waiting. A drink is being made.</p>
+    <a href="tel:0399511151" class="btn-primary">Call to Reserve</a>
+    <a href="https://maps.app.goo.gl/eSgtVYeM77mkGF7i6" target="_blank" class="btn-secondary">Get Directions</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">The Leaf House Cafe</div>
+        <div class="footer-tagline">/ a place to drift /</div>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/theleaf.housecafe/" target="_blank" title="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="https://www.facebook.com/people/The-Leaf-Caf%C3%A9/61582700075862/" target="_blank" title="Facebook">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </a>
+          <a href="tel:0399511151" title="Phone">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.09 12 19.79 19.79 0 011.07 3.38a2 2 0 012-2.18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 8.28a16 16 0 006 6l.95-.95a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7a2 2 0 011.72 2z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Navigate</div>
+        <ul>
+          <li><a href="#story">Our Story</a></li>
+          <li><a href="#drinks">Signature Drinks</a></li>
+          <li><a href="#menu">Full Menu</a></li>
+          <li><a href="#experience">Experience</a></li>
+          <li><a href="#visit">Visit Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Hours</div>
+        <ul>
+          <li><a href="#">Mon – Sun</a></li>
+          <li><a href="#">7:00 AM – 10:00 PM</a></li>
+          <li><a href="#">Open every day</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Contact</div>
+        <ul>
+          <li><a href="tel:0399511151">0399 511 151</a></li>
+          <li><a href="mailto:theleafcafe00@gmail.com">Email Us</a></li>
+          <li><a href="https://maps.app.goo.gl/eSgtVYeM77mkGF7i6" target="_blank">Get Directions</a></li>
+          <li><a href="https://www.instagram.com/theleaf.housecafe/" target="_blank">@theleaf.housecafe</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 The Leaf House Cafe · Đà Nẵng, Vietnam</span>
+      <span class="footer-copy">Designed with love · / a place to drift /</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal, .review-card, .pillar');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const delay = el.dataset.delay || 0;
+        setTimeout(() => el.classList.add('visible'), +delay);
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Menu filter
+  function filterMenu(cat, btn) {
+    document.querySelectorAll('.menu-cat').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.menu-item').forEach(item => {
+      if (cat === 'all' || item.dataset.cat === cat) {
+        item.style.display = '';
+        item.style.opacity = '1';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+</script>
+</body>
+</html>
