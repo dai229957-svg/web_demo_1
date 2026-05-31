@@ -621,12 +621,13 @@
     display: block;
   }
 
-  /* ── MENU ── */
+  /* ── MENU ENHANCED ── */
   .menu-section { padding: 8rem 0; background: var(--jungle); position: relative; overflow: hidden; }
   .menu-section::before {
     content: '';
     position: absolute; inset: 0;
     background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(78,110,56,0.4), transparent);
+    pointer-events: none;
   }
   .menu-section .section-title { color: var(--sand-lt); }
   .menu-section .section-title em { color: var(--amber-glow); }
@@ -636,12 +637,12 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 0.8rem;
-    margin-bottom: 3rem;
+    gap: 0.6rem;
+    margin-bottom: 3.5rem;
     position: relative;
   }
   .menu-cat {
-    padding: 0.7rem 1.8rem;
+    padding: 0.75rem 1.6rem;
     border: 1px solid rgba(255,255,255,0.15);
     font-size: 0.68rem;
     font-weight: 400;
@@ -649,50 +650,156 @@
     text-transform: uppercase;
     color: var(--sand);
     cursor: pointer;
-    transition: all 0.3s;
-    border-radius: 2px;
+    transition: all 0.35s cubic-bezier(.16,1,.3,1);
+    border-radius: 30px;
     background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
-  .menu-cat:hover, .menu-cat.active {
+  .menu-cat .cat-icon { font-size: 1rem; transition: transform 0.35s; }
+  .menu-cat:hover { border-color: rgba(200,131,42,0.5); color: var(--amber-glow); }
+  .menu-cat:hover .cat-icon { transform: scale(1.2); }
+  .menu-cat.active {
     background: var(--amber);
     border-color: var(--amber);
     color: var(--jungle);
     font-weight: 500;
+    box-shadow: 0 4px 20px rgba(200,131,42,0.4);
   }
+  .menu-cat.active .cat-icon { transform: scale(1.15); }
+  .menu-grid-wrap { position: relative; min-height: 400px; }
   .menu-items {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1.2rem;
+    gap: 1.4rem;
     position: relative;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .menu-items.fading {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
   }
   .menu-item {
-    padding: 1.4rem 1.6rem;
     background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-top: 2px solid rgba(200,131,42,0.3);
-    transition: background 0.3s;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1), box-shadow 0.4s, background 0.3s;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: cardIn 0.5s cubic-bezier(.16,1,.3,1) forwards;
   }
-  .menu-item:hover { background: rgba(200,131,42,0.08); }
+  @keyframes cardIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .menu-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    background: rgba(255,255,255,0.07);
+  }
+  .menu-item-visual {
+    height: 150px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .menu-item-visual::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 55%;
+    background: linear-gradient(to top, rgba(20,18,10,0.75), transparent);
+  }
+  .menu-item-emoji {
+    font-size: 3.6rem;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1);
+    filter: drop-shadow(0 4px 14px rgba(0,0,0,0.5));
+    line-height: 1;
+  }
+  .menu-item:hover .menu-item-emoji { transform: scale(1.2) translateY(-5px); }
+  .menu-item-tag {
+    position: absolute;
+    top: 0.65rem; right: 0.65rem;
+    font-size: 0.52rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.22rem 0.55rem;
+    border-radius: 20px;
+    z-index: 2;
+    backdrop-filter: blur(4px);
+  }
+  .tag-signature { background: rgba(200,131,42,0.9); color: var(--jungle); }
+  .tag-popular   { background: rgba(255,255,255,0.15); color: var(--sand-lt); border: 1px solid rgba(255,255,255,0.2); }
+  .tag-new       { background: rgba(78,110,56,0.85); color: var(--cream); }
+  .menu-item-body {
+    padding: 1.1rem 1.3rem 1.3rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
   .menu-item-name {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.05rem;
+    font-size: 1.08rem;
     color: var(--sand-lt);
-    margin-bottom: 0.3rem;
-    line-height: 1.3;
+    margin-bottom: 0.32rem;
+    line-height: 1.25;
+    font-weight: 600;
   }
   .menu-item-desc {
-    font-size: 0.7rem;
+    font-size: 0.67rem;
     color: var(--sand);
-    opacity: 0.65;
-    line-height: 1.5;
-    margin-bottom: 0.7rem;
+    opacity: 0.6;
+    line-height: 1.55;
+    flex: 1;
+    padding-bottom: 0.8rem;
+  }
+  .menu-item-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    margin-top: auto;
   }
   .menu-item-price {
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     letter-spacing: 0.15em;
     color: var(--amber);
     font-weight: 500;
   }
+  .menu-item-icon-sm {
+    font-size: 1rem;
+    opacity: 0.4;
+    transition: opacity 0.3s;
+  }
+  .menu-item:hover .menu-item-icon-sm { opacity: 0.8; }
+  .menu-item[data-cat="coffee"] .menu-item-visual { background: linear-gradient(135deg, #2c1a0e 0%, #4a2c14 55%, #1a100a 100%); }
+  .menu-item[data-cat="tea"]    .menu-item-visual { background: linear-gradient(135deg, #142010 0%, #2a4020 55%, #0e1a0c 100%); }
+  .menu-item[data-cat="cold"]   .menu-item-visual { background: linear-gradient(135deg, #0e1a28 0%, #1a3040 55%, #080e18 100%); }
+  .menu-item[data-cat="food"]   .menu-item-visual { background: linear-gradient(135deg, #281808 0%, #402a10 55%, #180e04 100%); }
+  .menu-item:nth-child(1)  { animation-delay: 0.04s; }
+  .menu-item:nth-child(2)  { animation-delay: 0.09s; }
+  .menu-item:nth-child(3)  { animation-delay: 0.14s; }
+  .menu-item:nth-child(4)  { animation-delay: 0.19s; }
+  .menu-item:nth-child(5)  { animation-delay: 0.24s; }
+  .menu-item:nth-child(6)  { animation-delay: 0.29s; }
+  .menu-item:nth-child(7)  { animation-delay: 0.34s; }
+  .menu-item:nth-child(8)  { animation-delay: 0.39s; }
+  .menu-item:nth-child(9)  { animation-delay: 0.44s; }
+  .menu-item:nth-child(10) { animation-delay: 0.49s; }
+  .menu-item:nth-child(11) { animation-delay: 0.54s; }
+  .menu-item:nth-child(12) { animation-delay: 0.59s; }
 
   /* ── VISIT ── */
   .visit { padding: 8rem 0; background: var(--parchment); }
@@ -864,6 +971,7 @@
     .story-photo-wrap { height: 380px; }
     .drinks-grid, .reviews-grid { grid-template-columns: 1fr; }
     .menu-items { grid-template-columns: repeat(2, 1fr); }
+    .menu-item-visual { height: 120px; }
     .footer-grid { grid-template-columns: 1fr 1fr; }
     .mosaic { display: block; }
     .mosaic-block { margin-bottom: 0.9rem; }
@@ -891,7 +999,7 @@
     <li><a href="#story"><span data-en>Our Story</span><span data-vi>Câu Chuyện</span></a></li>
     <li><a href="#drinks"><span data-en>Drinks</span><span data-vi>Đồ Uống</span></a></li>
     <li><a href="#menu"><span data-en>Menu</span><span data-vi>Thực Đơn</span></a></li>
-    <li><a href="#visit"><span data-en>Visit</span><span data-vi>Địa chỉ</span></a></li>
+    <li><a href="#visit"><span data-en>Visit</span><span data-vi>địa chỉ</span></a></li>
     <li><a href="tel:0399511151" class="nav-cta">
       <span data-en>Reserve a Seat</span>
       <span data-vi>Đặt Chỗ Ngay</span>
@@ -961,7 +1069,7 @@
     <div class="story-grid">
       <div class="story-photo-wrap reveal">
         <div class="story-photo-main">
-          <img src="p.jpg" alt="The Leaf House Cafe" loading="lazy">
+          <img src="p.jpg" alt="The Leaf House Cafe interior garden" loading="lazy">
         </div>
         <div class="story-photo-accent">
           <div class="accent-quote">
@@ -1217,106 +1325,238 @@
     </div>
     <div class="menu-cats reveal">
       <button class="menu-cat active" onclick="filterMenu('all',this)">
+        <span class="cat-icon">🌿</span>
         <span data-en>All</span><span data-vi>Tất Cả</span>
       </button>
       <button class="menu-cat" onclick="filterMenu('coffee',this)">
+        <span class="cat-icon">☕</span>
         <span data-en>Coffee</span><span data-vi>Cà Phê</span>
       </button>
       <button class="menu-cat" onclick="filterMenu('tea',this)">
+        <span class="cat-icon">🍵</span>
         <span data-en>Tea & Botanicals</span><span data-vi>Trà & Thảo Mộc</span>
       </button>
       <button class="menu-cat" onclick="filterMenu('cold',this)">
+        <span class="cat-icon">🧊</span>
         <span data-en>Cold Drinks</span><span data-vi>Đồ Uống Lạnh</span>
       </button>
       <button class="menu-cat" onclick="filterMenu('food',this)">
+        <span class="cat-icon">🥗</span>
         <span data-en>Light Bites</span><span data-vi>Đồ Ăn Nhẹ</span>
       </button>
     </div>
-    <div class="menu-items reveal" id="menuGrid">
+    <div class="menu-grid-wrap">
+    <div class="menu-items" id="menuGrid">
+
+      <!-- COFFEE -->
       <div class="menu-item" data-cat="coffee">
-        <div class="menu-item-name" data-en>Americano</div>
-        <div class="menu-item-name" data-vi>Americano Đen</div>
-        <div class="menu-item-desc" data-en>Clean bold Vietnamese highland</div>
-        <div class="menu-item-desc" data-vi>Đậm đà, thuần khiết từ cao nguyên</div>
-        <div class="menu-item-price">30,000 ₫</div>
+        <div class="menu-item-visual">
+          <div class="menu-item-emoji">☕</div>
+          <span class="menu-item-tag tag-popular"><span data-en>Popular</span><span data-vi>Phổ biến</span></span>
+        </div>
+        <div class="menu-item-body">
+          <div class="menu-item-name" data-en>Americano</div>
+          <div class="menu-item-name" data-vi>Americano Đen</div>
+          <div class="menu-item-desc" data-en>Clean, bold Vietnamese highland beans — pure and unapologetic</div>
+          <div class="menu-item-desc" data-vi>Đậm đà, thuần khiết từ hạt cà phê cao nguyên Việt Nam</div>
+          <div class="menu-item-footer">
+            <span class="menu-item-price">30,000 ₫</span>
+            <span class="menu-item-icon-sm">☕</span>
+          </div>
+        </div>
       </div>
+
       <div class="menu-item" data-cat="coffee">
-        <div class="menu-item-name">Flat White</div>
-        <div class="menu-item-desc" data-en>Micro-foam, rich espresso</div>
-        <div class="menu-item-desc" data-vi>Bọt micro, espresso đậm đà</div>
-        <div class="menu-item-price">45,000 ₫</div>
+        <div class="menu-item-visual">
+          <div class="menu-item-emoji">🥛</div>
+          <span class="menu-item-tag tag-popular"><span data-en>Popular</span><span data-vi>Phổ biến</span></span>
+        </div>
+        <div class="menu-item-body">
+          <div class="menu-item-name">Flat White</div>
+          <div class="menu-item-desc" data-en>Velvety micro-foam, rich double espresso, creamy balance</div>
+          <div class="menu-item-desc" data-vi>Bọt micro mịn mượt, espresso đậm đà, vị kem béo ngậy</div>
+          <div class="menu-item-footer">
+            <span class="menu-item-price">45,000 ₫</span>
+            <span class="menu-item-icon-sm">🥛</span>
+          </div>
+        </div>
       </div>
+
       <div class="menu-item" data-cat="coffee">
-        <div class="menu-item-name" data-en>Egg Coffee</div>
-        <div class="menu-item-name" data-vi>Cà Phê Trứng</div>
-        <div class="menu-item-desc" data-en>Hanoi-style egg yolk cream</div>
-        <div class="menu-item-desc" data-vi>Kem trứng kiểu Hà Nội</div>
-        <div class="menu-item-price">50,000 ₫</div>
+        <div class="menu-item-visual">
+          <div class="menu-item-emoji">🥚</div>
+          <span class="menu-item-tag tag-signature"><span data-en>Signature</span><span data-vi>Đặc trưng</span></span>
+        </div>
+        <div class="menu-item-body">
+          <div class="menu-item-name" data-en>Egg Coffee</div>
+          <div class="menu-item-name" data-vi>Cà Phê Trứng</div>
+          <div class="menu-item-desc" data-en>Hanoi-style whisked egg yolk cream, deeply comforting</div>
+          <div class="menu-item-desc" data-vi>Kem lòng đỏ trứng kiểu Hà Nội, đặc biệt và ấm lòng</div>
+          <div class="menu-item-footer">
+            <span class="menu-item-price">50,000 ₫</span>
+            <span class="menu-item-icon-sm">🥚</span>
+          </div>
+        </div>
       </div>
+
       <div class="menu-item" data-cat="coffee">
-        <div class="menu-item-name" data-en>Espresso Tonic</div>
-        <div class="menu-item-name" data-vi>Espresso Tonic</div>
-        <div class="menu-item-desc" data-en>Sparkling tonic, double shot, citrus</div>
-        <div class="menu-item-desc" data-vi>Tonic soda, double shot, cam quýt</div>
-        <div class="menu-item-price">55,000 ₫</div>
+        <div class="menu-item-visual">
+          <div class="menu-item-emoji">✨</div>
+          <span class="menu-item-tag tag-new"><span data-en>New</span><span data-vi>Mới</span></span>
+        </div>
+        <div class="menu-item-body">
+          <div class="menu-item-name" data-en>Espresso Tonic</div>
+          <div class="menu-item-name" data-vi>Espresso Tonic</div>
+          <div class="menu-item-desc" data-en>Sparkling tonic, double shot, fresh citrus zest — electric</div>
+          <div class="menu-item-desc" data-vi>Tonic soda, double shot, vỏ cam quýt tươi — sảng khoái</div>
+          <div class="menu-item-footer">
+            <span class="menu-item-price">55,000 ₫</span>
+            <span class="menu-item-icon-sm">✨</span>
+          </div>
+        </div>
       </div>
+
+      <!-- TEA -->
       <div class="menu-item" data-cat="tea">
-        <div class="menu-item-name" data-en>Pandan Iced Tea</div>
-        <div class="menu-item-name" data-vi>Trà Lá Dứa Đá</div>
-        <div class="menu-item-desc" data-en>Fragrant pandan leaf, light honey</div>
-        <div class="menu-item-desc" data-vi>Hương lá dứa thơm, mật ong nhẹ</div>
-        <div class="menu-item-price">40,000 ₫</div>
+        <div class="menu-item-visual">
+          <div class="menu-item-emoji">🌿</div>
+          <span class="menu-item-tag tag-signature"><span data-en>Signature</span><span data-vi>Đặc trưng</span></span>
+        </div>
+        <div class="menu-item-body">
+          <div class="menu-item-name" data-en>Pandan Iced Tea</div>
+          <div class="menu-item-name" data-vi>Trà Lá Dứa Đá</div>
+          <div class="menu-item-desc" data-en>Fragrant pandan leaf steeped with light wildflower honey</div>
+          <div class="menu-item-desc" data-vi>Hương lá dứa thơm nồng, pha với mật ong hoa rừng nhẹ nhàng</div>
+          <div class="menu-item-footer">
+            <span class="menu-item-price">40,000 ₫</span>
+            <span class="menu-item-icon-sm">🌿</span>
+          </div>
+        </div>
       </div>
+
       <div class="menu-item" data-cat="tea">
-        <div class="menu-item-name" data-en>Hibiscus Lemongrass</div>
-        <div class="menu-item-name" data-vi>Atiso Đỏ Sả</div>
-        <div class="menu-item-desc" data-en>Floral, tart, deeply refreshing</div>
-        <div class="menu-item-desc" data-vi>Hương hoa, thanh chua, giải nhiệt</div>
-        <div class="menu-item-price">45,000 ₫</div>
+        <div class="menu-item-visual">
+          <div class="menu-item-emoji">🌺</div>
+          <span class="menu-item-tag tag-popular"><span data-en>Popular</span><span data-vi>Phổ biến</span></span>
+        </div>
+        <div class="menu-item-body">
+          <div class="menu-item-name" data-en>Hibiscus Lemongrass</div>
+          <div class="menu-item-name" data-vi>Atiso Đỏ Sả</div>
+          <div class="menu-item-desc" data-en>Deep floral, tart hibiscus, lemongrass — iced & refreshing</div>
+          <div class="menu-item-desc" data-vi>Atiso đỏ thơm hoa, sả tươi mát — đá lạnh, giải nhiệt tuyệt vời</div>
+          <div class="menu-item-footer">
+            <span class="menu-item-price">45,000 ₫</span>
+            <span class="menu-item-icon-sm">🌺</span>
+          </div>
+        </div>
       </div>
+
+      <div class="menu-item" data-cat="tea">
+        <div class="menu-item-visual">
+          <div class="menu-item-emoji">🧋</div>
+          <span class="menu-item-tag tag-popular"><span data-en>Popular</span><span data-vi>Phổ biến</span></span>
+        </div>
+        <div class="menu-item-body">
+          <div class="menu-item-name" data-en>Vietnamese Milk Tea</div>
+          <div class="menu-item-name" data-vi>Trà Sữa Việt Nam</div>
+          <div class="menu-item-desc" data-en>Strong black tea, condensed milk, tapioca pearls</div>
+          <div class="menu-item-desc" data-vi>Trà đen đậm đặc, sữa đặc, trân châu tapioca mềm dai</div>
+          <div class="menu-item-footer">
+            <span class="menu-item-price">45,000 ₫</span>
+            <span class="menu-item-icon-sm">🧋</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-item" data-cat="tea">
+        <div class="menu-item-visual">
+          <div class="menu-item-emoji">🍵</div>
+          <span class="menu-item-tag tag-signature"><span data-en>Signature</span><span data-vi>Đặc trưng</span></span>
+        </div>
+        <div class="menu-item-body">
+          <div class="menu-item-name" data-en>Matcha Drift</div>
+          <div class="menu-item-name" data-vi>Matcha Lặng Trôi</div>
+          <div class="menu-item-desc" data-en>Ceremonial grade, whisked to silk, oat milk foam cloud</div>
+          <div class="menu-item-desc" data-vi>Matcha hạng cao, đánh mịn như lụa, mây bọt sữa yến mạch</div>
+          <div class="menu-item-footer">
+            <span class="menu-item-price">60,000 ₫</span>
+            <span class="menu-item-icon-sm">🍵</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLD -->
       <div class="menu-item" data-cat="cold">
-        <div class="menu-item-name" data-en>Mango Coconut Shake</div>
-        <div class="menu-item-name" data-vi>Sinh Tố Xoài Dừa</div>
-        <div class="menu-item-desc" data-en>Fresh mango, coconut milk blend</div>
-        <div class="menu-item-desc" data-vi>Xoài tươi, sữa dừa thơm béo</div>
-        <div class="menu-item-price">55,000 ₫</div>
+        <div class="menu-item-visual">
+          <div class="menu-item-emoji">🥭</div>
+          <span class="menu-item-tag tag-popular"><span data-en>Popular</span><span data-vi>Phổ biến</span></span>
+        </div>
+        <div class="menu-item-body">
+          <div class="menu-item-name" data-en>Mango Coconut Shake</div>
+          <div class="menu-item-name" data-vi>Sinh Tố Xoài Dừa</div>
+          <div class="menu-item-desc" data-en>Ripe fresh mango blended with rich coconut milk</div>
+          <div class="menu-item-desc" data-vi>Xoài chín tươi xay cùng sữa dừa béo ngậy thơm lừng</div>
+          <div class="menu-item-footer">
+            <span class="menu-item-price">55,000 ₫</span>
+            <span class="menu-item-icon-sm">🥭</span>
+          </div>
+        </div>
       </div>
+
       <div class="menu-item" data-cat="cold">
-        <div class="menu-item-name" data-en>Yuzu Sparkle</div>
-        <div class="menu-item-name" data-vi>Yuzu Soda</div>
-        <div class="menu-item-desc" data-en>Yuzu, soda, sea salt rim</div>
-        <div class="menu-item-desc" data-vi>Chanh yuzu, soda, viền muối biển</div>
-        <div class="menu-item-price">50,000 ₫</div>
+        <div class="menu-item-visual">
+          <div class="menu-item-emoji">🍋</div>
+          <span class="menu-item-tag tag-new"><span data-en>New</span><span data-vi>Mới</span></span>
+        </div>
+        <div class="menu-item-body">
+          <div class="menu-item-name" data-en>Yuzu Sparkle</div>
+          <div class="menu-item-name" data-vi>Yuzu Soda</div>
+          <div class="menu-item-desc" data-en>Japanese yuzu citrus, soda, flaked sea salt rim</div>
+          <div class="menu-item-desc" data-vi>Chanh yuzu Nhật, soda, viền muối biển vảy</div>
+          <div class="menu-item-footer">
+            <span class="menu-item-price">50,000 ₫</span>
+            <span class="menu-item-icon-sm">🍋</span>
+          </div>
+        </div>
       </div>
+
+      <!-- FOOD -->
       <div class="menu-item" data-cat="food">
-        <div class="menu-item-name" data-en>Avocado Toast</div>
-        <div class="menu-item-name" data-vi>Bánh Mì Bơ</div>
-        <div class="menu-item-desc" data-en>Sourdough, avocado, sesame, chilli</div>
-        <div class="menu-item-desc" data-vi>Bánh sourdough, bơ, vừng, ớt</div>
-        <div class="menu-item-price">65,000 ₫</div>
+        <div class="menu-item-visual">
+          <div class="menu-item-emoji">🥑</div>
+          <span class="menu-item-tag tag-popular"><span data-en>Popular</span><span data-vi>Phổ biến</span></span>
+        </div>
+        <div class="menu-item-body">
+          <div class="menu-item-name" data-en>Avocado Toast</div>
+          <div class="menu-item-name" data-vi>Bánh Mì Bơ</div>
+          <div class="menu-item-desc" data-en>Toasted sourdough, smashed avocado, sesame, chilli flakes</div>
+          <div class="menu-item-desc" data-vi>Bánh sourdough nướng, bơ nghiền, vừng rang, ớt vảy</div>
+          <div class="menu-item-footer">
+            <span class="menu-item-price">65,000 ₫</span>
+            <span class="menu-item-icon-sm">🥑</span>
+          </div>
+        </div>
       </div>
+
       <div class="menu-item" data-cat="food">
-        <div class="menu-item-name" data-en>Bánh Mì Sandwich</div>
-        <div class="menu-item-name" data-vi>Bánh Mì Kẹp</div>
-        <div class="menu-item-desc" data-en>Butter, pâté, pickled daikon, herbs</div>
-        <div class="menu-item-desc" data-vi>Bơ, pâté, củ cải dưa, rau thơm</div>
-        <div class="menu-item-price">45,000 ₫</div>
+        <div class="menu-item-visual">
+          <div class="menu-item-emoji">🥪</div>
+          <span class="menu-item-tag tag-popular"><span data-en>Popular</span><span data-vi>Phổ biến</span></span>
+        </div>
+        <div class="menu-item-body">
+          <div class="menu-item-name" data-en>Bánh Mì Sandwich</div>
+          <div class="menu-item-name" data-vi>Bánh Mì Kẹp</div>
+          <div class="menu-item-desc" data-en>Crispy baguette, pâté, pickled daikon, cilantro, chilli</div>
+          <div class="menu-item-desc" data-vi>Bánh mì giòn rụm, pâté, củ cải ngâm, rau mùi, ớt</div>
+          <div class="menu-item-footer">
+            <span class="menu-item-price">45,000 ₫</span>
+            <span class="menu-item-icon-sm">🥪</span>
+          </div>
+        </div>
       </div>
-      <div class="menu-item" data-cat="food">
-        <div class="menu-item-name" data-en>Fruit Bowl</div>
-        <div class="menu-item-name" data-vi>Tô Trái Cây</div>
-        <div class="menu-item-desc" data-en>Local fruit, yogurt, granola, honey</div>
-        <div class="menu-item-desc" data-vi>Trái cây địa phương, sữa chua, granola, mật ong</div>
-        <div class="menu-item-price">55,000 ₫</div>
-      </div>
-      <div class="menu-item" data-cat="tea">
-        <div class="menu-item-name" data-en>Vietnamese Milk Tea</div>
-        <div class="menu-item-name" data-vi>Trà Sữa Việt Nam</div>
-        <div class="menu-item-desc" data-en>Strong black tea, condensed milk, pearls</div>
-        <div class="menu-item-desc" data-vi>Trà đen đậm, sữa đặc, trân châu</div>
-        <div class="menu-item-price">45,000 ₫</div>
-      </div>
+
     </div>
+    </div><!-- end menu-grid-wrap -->
   </div>
 </section>
 
@@ -1476,7 +1716,7 @@
       <span class="footer-copy">© 2025 The Leaf House Cafe · Đà Nẵng</span>
       <span class="footer-copy">
         <span data-en>Designed with love · / a place to drift /</span>
-        <span data-vi>Thiết kế bởi dai_beo//zalo:0398989734/span>
+        <span data-vi>Thiết kế với tình yêu · / nơi để lặng trôi /</span>
       </span>
     </div>
   </div>
@@ -1510,13 +1750,32 @@
   }, { threshold: 0.12 });
   revealEls.forEach(el => revealObs.observe(el));
 
-  // ── MENU FILTER ──
+  // ── MENU FILTER with animation ──
   function filterMenu(cat, btn) {
+    const grid = document.getElementById('menuGrid');
     document.querySelectorAll('.menu-cat').forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
-    document.querySelectorAll('.menu-item').forEach(item => {
-      item.style.display = (cat === 'all' || item.dataset.cat === cat) ? '' : 'none';
-    });
+
+    // Fade out
+    grid.classList.add('fading');
+
+    setTimeout(() => {
+      // Update visibility
+      document.querySelectorAll('.menu-item').forEach((item, i) => {
+        const show = (cat === 'all' || item.dataset.cat === cat);
+        item.style.display = show ? 'flex' : 'none';
+        if (show) {
+          // Reset animation so cards fly in fresh
+          item.style.animation = 'none';
+          item.offsetHeight; // reflow
+          item.style.animation = '';
+          item.style.animationDelay = (i * 0.055) + 's';
+        }
+      });
+
+      // Fade in
+      grid.classList.remove('fading');
+    }, 260);
   }
 
   // ── SMOOTH SCROLL ──
